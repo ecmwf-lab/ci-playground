@@ -1,0 +1,25 @@
+on: 
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .release-please-manifest.json
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
+      - run: |
+          VERSION=$(jq -r '."."' .release-please-manifest.json)
+          find src/test-package/migrations -type f -name "*.py" -print0 | while IFS= read -r -d '' file; do
+            if grep -q '%NEXT_ANEMOI_MODELS_VERSION%' "$file"; then
+              sed -i "s/%NEXT_ANEMOI_MODELS_VERSION%/$VERSION/g" "$file"
+            fi
+          done
+          git config user.name "github-actions[bot]"
+          git add .
+          git commit -m "checkpoint migrations"
+          git push
