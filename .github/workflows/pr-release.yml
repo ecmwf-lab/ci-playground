@@ -1,15 +1,17 @@
-name: Checkpoint migrations
+# This workflow runs on release PRs created by release-please.
+# Here we can do extra things required before releasing.
+name: "[PR] Release"
 
 on: 
   pull_request:
     branches:
       - main
     paths:
-      - '.release-please-manifest.json'
+      - .release-please-manifest.json
     types: [opened, synchronize, reopened]
 
 jobs:
-  migrate:
+  migrations:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -17,22 +19,20 @@ jobs:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
       - run: |
-          VERSION=$(jq -r '."."' .release-please-manifest.json)
+          NEXT_MODELS_VERSION=$(jq -r '."."' .release-please-manifest.json)
           MIGRATION_FOLDER=src/test-package/migrations
 
-          echo "Next version: $VERSION"
+          echo "Next version: $NEXT_MODELS_VERSION"
 
           find $MIGRATION_FOLDER -type f -name "*.py" -print0 | while IFS= read -r -d '' file; do
-            if grep -q '%NEXT_ANEMOI_MODELS_VERSION%' "$file"; then
-              sed -i "s/%NEXT_ANEMOI_MODELS_VERSION%/$VERSION/g" "$file"
-              echo " + Updated $file"
-            fi
+            sed -i "s/%NEXT_ANEMOI_MODELS_VERSION%/$NEXT_MODELS_VERSION/g" "$file"
           done
 
           echo "$(git diff)"
-          
+
           if [ -n "$(git status --porcelain)" ]; then
             git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
             git add .
             git commit -m "checkpoint migrations"
             git push
