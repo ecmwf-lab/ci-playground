@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/ecmwf-lab/ci-playground/compare/0.1.2...0.1.3) (2025-08-20)
+
+
+### Features
+
+* Brand new feature ([1e2e3ec](https://github.com/ecmwf-lab/ci-playground/commit/1e2e3ec9c1ff9886e69755e461ad934804af749a))
+
 ## [0.1.2](https://github.com/ecmwf-lab/ci-playground/compare/0.1.1...0.1.2) (2025-08-20)
 
 
