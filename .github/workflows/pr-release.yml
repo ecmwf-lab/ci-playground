@@ -18,7 +18,8 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-      - run: |
+      - name: "Update migrations placeholder with next version"
+        run: |
           NEXT_MODELS_VERSION=$(jq -r '."."' .release-please-manifest.json)
           MIGRATION_FOLDER=src/test-package/migrations
 
@@ -36,4 +37,6 @@ jobs:
             git add .
             git commit -m "checkpoint migrations"
             git push
+          else
+            echo "Nothing to commit, migrations are up to date."
           fi
