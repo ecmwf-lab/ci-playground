@@ -21,7 +21,7 @@ jobs:
       - name: "Update migrations placeholder with next version"
         run: |
           NEXT_MODELS_VERSION=$(jq -r '."."' .release-please-manifest.json)
-          MIGRATION_FOLDER=src/test-package/migrations
+          MIGRATION_FOLDER=src/test-package/migrationss
 
           echo "Next version: $NEXT_MODELS_VERSION"
 
